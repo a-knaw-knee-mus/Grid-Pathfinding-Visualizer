@@ -15,7 +15,7 @@ enum cellState {
 
 int main()
 {
-    RenderWindow window(VideoMode(500, 500), "Search");
+    RenderWindow window(VideoMode(500, 500), "Search", Style::Titlebar | Style::Close);
 
     int gridSize = 50;
     int cellSize = 10;
@@ -41,8 +41,19 @@ int main()
                 window.close();
             }
 
-            // run search algorithm
+            // reset cells
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::R) {
+                for (int x = 0; x < gridSize; ++x) {
+                    for (int y = 0; y < gridSize; ++y) {
+                        cellStates[x][y] = Clear;
+                    }
+                }
+                startCellIdx[0] = -1, startCellIdx[1] = -1;
+                endCellIdx[0] = -1, endCellIdx[1] = -1;
+            }
+
+            // run search algorithm
+            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter) {
                 if (startCellIdx[0] == -1 || startCellIdx[1] == -1) continue;
                 if (endCellIdx[0] == -1 || endCellIdx[1] == -1) continue;
 
@@ -93,6 +104,7 @@ int main()
                 endCellIdx[1] = cellY;
             }
 
+            // draw/undraw walls
             else if (event.type == Event::MouseButtonPressed) {
                 if (event.mouseButton.button == Mouse::Left) {
                     isLeftMousePressed = true;

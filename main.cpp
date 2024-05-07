@@ -1,6 +1,8 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <chrono>
+#include <thread>
 #include "include/states.h"
 #include "include/window.h"
 #include "include/astar.h"
@@ -8,12 +10,13 @@ using namespace std;
 using namespace sf;
 
 string getTitle(string searchType, int speed, int cellSize) {
-    return "PATHFINDING - Search Algo: " + searchType + " | Speed: " + to_string(speed) + " | Cell Size: " + to_string(cellSize);
+    return "PATHFINDING - Search Algo: " + searchType + " | Speed: " + to_string(speed) + "ms | Cell Size: " + to_string(cellSize);
 }
 
 int main() {
     string searchType = "AStar";
     int speed = 20; // ms delay between frames
+    const int minSpeed = 0, maxSpeed = 200;
     int cellSize = 10;
     const int minCellSize = 4, maxCellSize = 20;
     const int windowSize = 500;
@@ -21,13 +24,13 @@ int main() {
     bool allowDiagonal = false;
 
     string title = getTitle(searchType, speed, cellSize);
-    RenderWindow window(VideoMode(windowSize, windowSize), title, Style::Titlebar | Style::Close);
+    RenderWindow window(VideoMode(windowSize+1, windowSize+1), title, Style::Titlebar | Style::Close);
 
     vector<vector<cellState>> cellStates(gridSize, vector<cellState>(gridSize, Clear));
 
     RectangleShape cell{};
     cell.setSize(Vector2f(cellSize-1, cellSize-1));
-    cell.setPosition(0, 0);
+    cell.setPosition(1, 1);
     cell.setOutlineColor(Color::Black);
     cell.setOutlineThickness(1);
 
@@ -47,6 +50,7 @@ int main() {
                 window.close();
             }
 
+            // change cell size
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Up) {
                 if (cellSize + 2 > maxCellSize) continue;
                 cellSize += 2;
@@ -87,6 +91,20 @@ int main() {
                     }
                 }
                 refreshScreen(window, cell, cellStates, gridSize, cellSize);
+            }
+
+            // change animation speed
+            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Right) {
+                if (speed + 10 > maxSpeed) continue;
+                speed += 10;
+                title = getTitle(searchType, speed, cellSize);
+                window.setTitle(title);
+            }
+            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Left) {
+                if (speed - 10 < minSpeed) continue;
+                speed -= 10;
+                title = getTitle(searchType, speed, cellSize);
+                window.setTitle(title);
             }
 
             // reset cells
@@ -202,6 +220,16 @@ int main() {
                 if (cellX >= 0 && cellX < gridSize && cellY >= 0 && cellY < gridSize) {
                     cellStates[cellX][cellY] = Wall;
                 }
+
+                // remove Visited and Path cells
+                for (int x = 0; x < gridSize; ++x) {
+                    for (int y = 0; y < gridSize; ++y) {
+                        // adding wall means nodes that were visited may not be visitable anymore so clear
+                        if (cellStates[x][y] == Path || cellStates[x][y] == Visited) {
+                            cellStates[x][y] = Clear;
+                        }
+                    }
+                }
             }
             else if (isRightMousePressed && Mouse::isButtonPressed(Mouse::Right)) {
                 Vector2i mousePosition = Mouse::getPosition(window);
@@ -210,16 +238,29 @@ int main() {
                 if (cellX >= 0 && cellX < gridSize && cellY >= 0 && cellY < gridSize) {
                     cellStates[cellX][cellY] = Clear;
                 }
+
+                // remove Visited and Path cells
+                for (int x = 0; x < gridSize; ++x) {
+                    for (int y = 0; y < gridSize; ++y) {
+                        // removing wall means any that were visited can still be visitable so dont clear visited
+                        if (cellStates[x][y] == Path) {
+                            cellStates[x][y] = Visited;
+                        }
+                    }
+                }
             }
         }
 
         if (searching) {
-            vector<Vector2i> path = findPath(cellStates, {startCellIdx[0], startCellIdx[1]}, {endCellIdx[0], endCellIdx[1]}, allowDiagonal, cell, window, cellSize);
+            vector<Vector2i> path = findPath(cellStates, {startCellIdx[0], startCellIdx[1]}, {endCellIdx[0], endCellIdx[1]}, allowDiagonal, cell, window, cellSize, speed);
             if (path.empty()) {
                 cout << "No Path Found" << endl;
             } else {
                 for (const auto& node : path) {
                     cellStates[node.x][node.y] = Path;
+                    chrono::milliseconds duration(speed);
+                    this_thread::sleep_for(duration);
+                    refreshScreen(window, cell, cellStates, gridSize, cellSize);
                 }
             }
             searching = false;

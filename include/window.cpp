@@ -6,12 +6,12 @@ using namespace std;
 
 // clear everything from the screen
 void refreshScreen(RenderWindow& window, RectangleShape& cell, const vector<vector<cellState>>& cellStates, int gridSize, int cellSize) {
-    window.clear();
+    window.clear(Color::White);
 
     // Draw the grid of cells
     for (int x = 0; x < gridSize; x++) {
         for (int y = 0; y < gridSize; y++) {
-            cell.setPosition(x * cellSize, y * cellSize);
+            cell.setPosition(x * cellSize + 1, y * cellSize + 1);
             if (cellStates[x][y] == Wall) {
                 cell.setFillColor(Color::Black);
             } else if (cellStates[x][y] == Start) {

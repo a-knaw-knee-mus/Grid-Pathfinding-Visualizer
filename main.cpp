@@ -88,6 +88,15 @@ int main() {
                 // save new location for start cell
                 startCellIdx[0] = cellX;
                 startCellIdx[1] = cellY;
+
+                // remove Visited and Path cells
+                for (int x = 0; x < gridSize; ++x) {
+                    for (int y = 0; y < gridSize; ++y) {
+                        if (cellStates[x][y] == Visited || cellStates[x][y] == Path) {
+                            cellStates[x][y] = Clear;
+                        }
+                    }
+                }
             }
 
             // set end cell
@@ -110,6 +119,15 @@ int main() {
                 // save new location for end cell
                 endCellIdx[0] = cellX;
                 endCellIdx[1] = cellY;
+
+                // remove Visited and Path cells
+                for (int x = 0; x < gridSize; ++x) {
+                    for (int y = 0; y < gridSize; ++y) {
+                        if (cellStates[x][y] == Visited || cellStates[x][y] == Path) {
+                            cellStates[x][y] = Clear;
+                        }
+                    }
+                }
             }
 
             // draw/undraw walls

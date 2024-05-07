@@ -7,23 +7,29 @@
 using namespace std;
 using namespace sf;
 
-int main() {
-    RenderWindow window(VideoMode(500, 500), "Search", Style::Titlebar | Style::Close);
+string getTitle(string searchType, int speed, int cellSize) {
+    return "PATHFINDING - Search Algo: " + searchType + " | Speed: " + to_string(speed) + " | Cell Size: " + to_string(cellSize);
+}
 
-    int gridSize = 50;
+int main() {
+    string searchType = "AStar";
+    int speed = 20; // ms delay between frames
     int cellSize = 10;
+    const int minCellSize = 4, maxCellSize = 20;
+    const int windowSize = 500;
+    int gridSize = windowSize / cellSize;
+    bool allowDiagonal = false;
+
+    string title = getTitle(searchType, speed, cellSize);
+    RenderWindow window(VideoMode(windowSize, windowSize), title, Style::Titlebar | Style::Close);
 
     vector<vector<cellState>> cellStates(gridSize, vector<cellState>(gridSize, Clear));
 
-    vector<vector<RectangleShape>> cells(gridSize, vector<RectangleShape>(gridSize));
-    for (int i=0; i<gridSize; i++) {
-        for (int j=0; j<gridSize; j++) {
-            cells[i][j].setSize(Vector2f(cellSize-1, cellSize-1));
-            cells[i][j].setPosition(i * cellSize, j * cellSize);
-            cells[i][j].setOutlineThickness(1);
-            cells[i][j].setOutlineColor(Color::Black);
-        }
-    }
+    RectangleShape cell{};
+    cell.setSize(Vector2f(cellSize-1, cellSize-1));
+    cell.setPosition(0, 0);
+    cell.setOutlineColor(Color::Black);
+    cell.setOutlineThickness(1);
 
     bool isLeftMousePressed = false;
     bool isRightMousePressed = false;
@@ -39,6 +45,48 @@ int main() {
         while (window.pollEvent(event) && !searching) {
             if (event.type == Event::Closed) {
                 window.close();
+            }
+
+            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Up) {
+                if (cellSize + 2 > maxCellSize) continue;
+                cellSize += 2;
+                gridSize = windowSize / cellSize;
+                title = getTitle(searchType, speed, cellSize);
+                window.setTitle(title);
+
+                cellStates.resize(gridSize);
+                for (vector<cellState>& row: cellStates) {
+                    row.resize(gridSize, Clear);
+                }
+
+                for (int i=0; i<gridSize; i++) {
+                    for (int j=0; j<gridSize; j++) {
+                        cell.setSize(Vector2f(cellSize-1, cellSize-1));
+                        cell.setPosition(i * cellSize, j * cellSize);
+                        cellStates[i][j] = Clear;
+                    }
+                }
+                refreshScreen(window, cell, cellStates, gridSize, cellSize);
+            }
+            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Down) {
+                if (cellSize - 2 < minCellSize) continue;
+                cellSize -= 2;
+                gridSize = windowSize / cellSize;
+                title = getTitle(searchType, speed, cellSize);
+                window.setTitle(title);
+
+                cellStates.resize(gridSize);
+                for (vector<cellState>& row: cellStates) {
+                    row.resize(gridSize, Clear);
+                }
+
+                for (int i=0; i<gridSize; i++) {
+                    for (int j=0; j<gridSize; j++) {
+                        cell.setSize(Vector2f(cellSize-1, cellSize-1));
+                        cellStates[i][j] = Clear;
+                    }
+                }
+                refreshScreen(window, cell, cellStates, gridSize, cellSize);
             }
 
             // reset cells
@@ -166,7 +214,7 @@ int main() {
         }
 
         if (searching) {
-            vector<Vector2i> path = findPath(cellStates, {startCellIdx[0], startCellIdx[1]}, {endCellIdx[0], endCellIdx[1]}, false, cells, window);
+            vector<Vector2i> path = findPath(cellStates, {startCellIdx[0], startCellIdx[1]}, {endCellIdx[0], endCellIdx[1]}, allowDiagonal, cell, window, cellSize);
             if (path.empty()) {
                 cout << "No Path Found" << endl;
             } else {
@@ -177,7 +225,7 @@ int main() {
             searching = false;
         }
 
-        refreshScreen(window, cells, cellStates, gridSize);
+        refreshScreen(window, cell, cellStates, gridSize, cellSize);
     }
     return 0;
 }

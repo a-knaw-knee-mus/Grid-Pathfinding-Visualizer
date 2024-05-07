@@ -28,7 +28,7 @@ int manhattanDistance(int x1, int y1, int x2, int y2) {
 }
 
 // A* algorithm implementation
-vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i startCellIdx, const Vector2i endCellIdx, const bool allowDiagonal, vector<vector<RectangleShape>>& cells, RenderWindow& window) {
+vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i startCellIdx, const Vector2i endCellIdx, const bool allowDiagonal, RectangleShape& cell, RenderWindow& window, int cellSize) {
     vector<Vector2i> path;
     vector<vector<bool>> visited(cellStates.size(), vector<bool>(cellStates[0].size(), false));
     priority_queue<Node*, vector<Node*>, function<bool(Node*, Node*)>> pq([](Node* a, Node* b) {
@@ -63,7 +63,7 @@ vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i 
         // mark cell as visited except if already marked as Start or End
         if (cellStates[current->x][current->y] == Clear) {
             cellStates[current->x][current->y] = Visited;
-            refreshScreen(window, cells, cellStates, cellStates.size());
+            refreshScreen(window, cell, cellStates, cellStates.size(), cellSize);
             chrono::milliseconds duration(20);
             this_thread::sleep_for(duration);
         }

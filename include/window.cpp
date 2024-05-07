@@ -5,27 +5,28 @@ using namespace sf;
 using namespace std;
 
 // clear everything from the screen
-void refreshScreen(RenderWindow& window, vector<vector<RectangleShape>>& cells, const vector<vector<cellState>>& cellStates, int gridSize) {
+void refreshScreen(RenderWindow& window, RectangleShape& cell, const vector<vector<cellState>>& cellStates, int gridSize, int cellSize) {
     window.clear();
 
     // Draw the grid of cells
     for (int x = 0; x < gridSize; x++) {
         for (int y = 0; y < gridSize; y++) {
+            cell.setPosition(x * cellSize, y * cellSize);
             if (cellStates[x][y] == Wall) {
-                cells[x][y].setFillColor(Color::Black);
+                cell.setFillColor(Color::Black);
             } else if (cellStates[x][y] == Start) {
-                cells[x][y].setFillColor(Color::Red);
+                cell.setFillColor(Color::Red);
             } else if (cellStates[x][y] == End) {
-                cells[x][y].setFillColor(Color::Green);
+                cell.setFillColor(Color::Green);
             } else if (cellStates[x][y] == Visited) {
-                cells[x][y].setFillColor(Color::Cyan);
+                cell.setFillColor(Color::Cyan);
             } else if (cellStates[x][y] == Path) {
-                cells[x][y].setFillColor(Color::Magenta);
+                cell.setFillColor(Color::Magenta);
             } else {
-                cells[x][y].setFillColor(Color::White);
+                cell.setFillColor(Color::White);
             }
 
-            window.draw(cells[x][y]);
+            window.draw(cell);
         }
     }
     window.display();

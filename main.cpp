@@ -9,9 +9,20 @@
 using namespace std;
 using namespace sf;
 
+// Remove Visited, VisitedInQueue and Path Cells
+void resetPathFinding(const int gridSize, vector<vector<cellState>>& cellStates) {
+    for (int x = 0; x < gridSize; ++x) {
+        for (int y = 0; y < gridSize; ++y) {
+            if (cellStates[x][y] == Visited || cellStates[x][y] == Path || cellStates[x][y] == VisitedInQueue) {
+                cellStates[x][y] = Clear;
+            }
+        }
+    }
+}
+
 int main() {
     string searchType = "AStar";
-    int speed = 20; // ms delay between frames
+    int speed = 0; // ms delay between frames
     const int minSpeed = 0, maxSpeed = 200;
     int cellSize = 10;
     const int minCellSize = 4, maxCellSize = 30;
@@ -126,6 +137,7 @@ int main() {
                 if (startCellIdx[0] == -1 || startCellIdx[1] == -1) continue;
                 if (endCellIdx[0] == -1 || endCellIdx[1] == -1) continue;
                 searching = true;
+                resetPathFinding(gridSize, cellStates);
                 cout << "Run Search" << endl;
             }
 
@@ -150,14 +162,7 @@ int main() {
                 startCellIdx[0] = cellX;
                 startCellIdx[1] = cellY;
 
-                // remove Visited and Path cells
-                for (int x = 0; x < gridSize; ++x) {
-                    for (int y = 0; y < gridSize; ++y) {
-                        if (cellStates[x][y] == Visited || cellStates[x][y] == Path || cellStates[x][y] == VisitedInQueue) {
-                            cellStates[x][y] = Clear;
-                        }
-                    }
-                }
+                resetPathFinding(gridSize, cellStates);
             }
 
             // set end cell
@@ -181,14 +186,7 @@ int main() {
                 endCellIdx[0] = cellX;
                 endCellIdx[1] = cellY;
 
-                // remove Visited and Path cells
-                for (int x = 0; x < gridSize; ++x) {
-                    for (int y = 0; y < gridSize; ++y) {
-                        if (cellStates[x][y] == Visited || cellStates[x][y] == Path || cellStates[x][y] == VisitedInQueue) {
-                            cellStates[x][y] = Clear;
-                        }
-                    }
-                }
+                resetPathFinding(gridSize, cellStates);
             }
 
             // draw/undraw walls
@@ -216,15 +214,7 @@ int main() {
                     cellStates[cellX][cellY] = Wall;
                 }
 
-                // remove Visited and Path cells
-                for (int x = 0; x < gridSize; ++x) {
-                    for (int y = 0; y < gridSize; ++y) {
-                        // adding wall means nodes that were visited may not be visitable anymore so clear
-                        if (cellStates[x][y] == Path || cellStates[x][y] == Visited || cellStates[x][y] == VisitedInQueue) {
-                            cellStates[x][y] = Clear;
-                        }
-                    }
-                }
+                resetPathFinding(gridSize, cellStates);
             }
             else if (isRightMousePressed && Mouse::isButtonPressed(Mouse::Right)) {
                 Vector2i mousePosition = Mouse::getPosition(window);
@@ -234,15 +224,7 @@ int main() {
                     cellStates[cellX][cellY] = Clear;
                 }
 
-                // remove Visited and Path cells
-                for (int x = 0; x < gridSize; ++x) {
-                    for (int y = 0; y < gridSize; ++y) {
-                        // removing wall means any that were visited can still be visitable so dont clear visited
-                        if (cellStates[x][y] == Path) {
-                            cellStates[x][y] = Visited;
-                        }
-                    }
-                }
+                resetPathFinding(gridSize, cellStates);
             }
         }
 

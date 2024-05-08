@@ -27,6 +27,12 @@ int manhattanDistance(int x1, int y1, int x2, int y2) {
     return abs(x1 - x2) + abs(y1 - y2);
 }
 
+bool isStartOrEnd(const int x, const int y, const Vector2i start, const Vector2i end) {
+    if (x == start.x && y == start.y) return true;
+    if (x == end.x && y == end.y) return true;
+    return false;
+}
+
 // A* algorithm implementation
 vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i startCellIdx, const Vector2i endCellIdx, const bool allowDiagonal, RectangleShape& cell, RenderWindow& window, Event& event, int cellSize, int speed, vector<string>& legendParams) {
     vector<Vector2i> path;
@@ -60,14 +66,17 @@ vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i 
 
         visited[current->x][current->y] = true;
 
-        if (current->parent != nullptr && cellStates[current->parent->x][current->parent->y] != Start) {
-            cellStates[current->parent->x][current->parent->y] = Visited;
+        if (!isStartOrEnd(current->x, current->y, startCellIdx, endCellIdx)) {
+            cellStates[current->x][current->y] = Visited;
+            refreshScreen(window, cell, cellStates, cellStates.size(), cellSize, legendParams);
+            chrono::milliseconds duration(speed);
+            this_thread::sleep_for(duration);
         }
 
         if (current->x == endCellIdx.x && current->y == endCellIdx.y) {
             // Reached the end cell, reconstruct the path
             while (current != nullptr) {
-                if (cellStates[current->x][current->y] == Visited) {
+                if (!isStartOrEnd(current->x, current->y, startCellIdx, endCellIdx)) {
                     path.emplace_back(current->x, current->y);
                 }
                 current = current->parent;
@@ -75,14 +84,6 @@ vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i 
             ranges::reverse(path.begin(), path.end());  // Reverse to get correct path order
             cout << "Path Found" << endl;
             break;
-        }
-
-        // mark cell as visited except if already marked as Start or End
-        if (cellStates[current->x][current->y] == Clear) {
-            cellStates[current->x][current->y] = VisitedInQueue;
-            refreshScreen(window, cell, cellStates, cellStates.size(), cellSize, legendParams);
-            chrono::milliseconds duration(speed);
-            this_thread::sleep_for(duration);
         }
 
         for (int i = 0; i < (allowDiagonal ? 8 : 4); ++i) {  // Check all directions if allowDiagonal is true
@@ -99,6 +100,9 @@ vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i 
             const int newCostToEnd = manhattanDistance(nextX, nextY, endCellIdx.x, endCellIdx.y);
 
             Node* nextNode = new Node(nextX, nextY, newCostFromStart, newCostToEnd, current);
+            if (!isStartOrEnd(nextX, nextY, startCellIdx, endCellIdx)) {
+                cellStates[nextX][nextY] = VisitedInQueue;
+            }
             pq.push(nextNode);
         }
 
@@ -110,7 +114,7 @@ vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i 
         pq.pop();
     }
 
-    if (path.empty()) {
+    if (!stopLoop && path.empty()) {
         cout << "No Path Found. Remove Walls and Try Again." << endl;
     }
     return path;

@@ -1,12 +1,131 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
 #include <vector>
 #include "states.h"
 using namespace sf;
 using namespace std;
 
+void addLegend(RenderWindow& window) {
+    Font regularFont, boldFont;
+    Text text;
+    int startX = 520;
+    int startY = 13; // vertical offset
+
+    if (!regularFont.loadFromFile("C:/Users/Muhammad/OneDrive/Documents/Code/cpp_search/fonts/JetBrainsMono-Regular.ttf")) {
+        cerr << "Failed to load JetBrainsMono-Regular.ttf" << endl;
+    }
+    if (!boldFont.loadFromFile("C:/Users/Muhammad/OneDrive/Documents/Code/cpp_search/fonts/JetBrainsMono-Bold.ttf")) {
+        cerr << "Failed to load JetBrainsMono-Bold.ttf" << endl;
+    }
+
+    text.setFillColor(Color::Black);
+
+    text.setFont(boldFont);
+    text.setString("Keybinds");
+    text.setCharacterSize(20);
+    text.setPosition(startX, startY+0);
+    window.draw(text);
+
+    text.setFont(boldFont);
+    text.setString("Algorithm Name");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+35);
+    window.draw(text);
+
+    text.setFont(regularFont);
+    text.setString("A*: 1   B: 2   C: 3");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+52);
+    window.draw(text);
+
+    text.setFont(boldFont);
+    text.setString("Animation Speed");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+80);
+    window.draw(text);
+
+    text.setFont(regularFont);
+    text.setString("Increase: <-   Decrease: ->");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+97);
+    window.draw(text);
+
+    text.setFont(boldFont);
+    text.setString("Cell Size");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+125);
+    window.draw(text);
+
+    text.setFont(regularFont);
+    text.setString("Increase: ^    Decrease: v");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+142);
+    window.draw(text);
+
+    text.setFont(boldFont);
+    text.setString("Allow Diagonal Paths");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+170);
+    window.draw(text);
+
+    text.setFont(regularFont);
+    text.setString("Toggle: D");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+187);
+    window.draw(text);
+
+    text.setFont(boldFont);
+    text.setString("Generate Walls: Q");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+250);
+    window.draw(text);
+
+    text.setFont(boldFont);
+    text.setString("Generate Maze:  W");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+280);
+    window.draw(text);
+
+    text.setFont(boldFont);
+    text.setString("Restart:        R");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+310);
+    window.draw(text);
+
+    text.setFont(boldFont);
+    text.setString("Set Wall:       Hold Left Click");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+340);
+    window.draw(text);
+
+    text.setFont(boldFont);
+    text.setString("Remove Wall:    Hold Right Click");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+370);
+    window.draw(text);
+
+    text.setFont(boldFont);
+    text.setString("Set Start:      S + Left Click");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+400);
+    window.draw(text);
+
+    text.setFont(boldFont);
+    text.setString("Set End:        E + Right Click");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+430);
+    window.draw(text);
+
+    text.setFont(boldFont);
+    text.setString("Begin Search:   Enter");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+460);
+    window.draw(text);
+}
+
 // clear everything from the screen
 void refreshScreen(RenderWindow& window, RectangleShape& cell, const vector<vector<cellState>>& cellStates, int gridSize, int cellSize) {
-    window.clear(Color::White);
+    window.clear(Color(255, 229, 204));
 
     // Draw the grid of cells
     for (int x = 0; x < gridSize; x++) {
@@ -29,6 +148,9 @@ void refreshScreen(RenderWindow& window, RectangleShape& cell, const vector<vect
             window.draw(cell);
         }
     }
+
+    addLegend(window);
+
     window.display();
 }
 

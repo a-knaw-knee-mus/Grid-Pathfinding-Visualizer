@@ -9,8 +9,8 @@
 using namespace std;
 using namespace sf;
 
-string getTitle(string searchType, int speed, int cellSize) {
-    return "PATHFINDING - Search Algo: " + searchType + " | Speed: " + to_string(speed) + "ms | Cell Size: " + to_string(cellSize);
+string getTitle(const string& searchType, int speed, int cellSize) {
+    return "PATHFINDING - Algo: " + searchType + " | Speed: " + to_string(speed) + "ms | Cell Size: " + to_string(cellSize) + "px";
 }
 
 int main() {
@@ -24,7 +24,8 @@ int main() {
     bool allowDiagonal = false;
 
     string title = getTitle(searchType, speed, cellSize);
-    RenderWindow window(VideoMode(windowSize+1, windowSize+1), title, Style::Titlebar | Style::Close);
+    // extra 200px horizontal for instructions
+    RenderWindow window(VideoMode(windowSize + 350, windowSize+1), title, Style::Titlebar | Style::Close);
 
     vector<vector<cellState>> cellStates(gridSize, vector<cellState>(gridSize, Clear));
 

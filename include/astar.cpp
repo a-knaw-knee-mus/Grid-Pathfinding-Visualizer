@@ -28,7 +28,7 @@ int manhattanDistance(int x1, int y1, int x2, int y2) {
 }
 
 // A* algorithm implementation
-vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i startCellIdx, const Vector2i endCellIdx, const bool allowDiagonal, RectangleShape& cell, RenderWindow& window, int cellSize, int speed, vector<string>& legendParams) {
+vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i startCellIdx, const Vector2i endCellIdx, const bool allowDiagonal, RectangleShape& cell, RenderWindow& window, Event& event, int cellSize, int speed, vector<string>& legendParams) {
     vector<Vector2i> path;
     vector<vector<bool>> visited(cellStates.size(), vector<bool>(cellStates[0].size(), false));
     priority_queue<Node*, vector<Node*>, function<bool(Node*, Node*)>> pq([](Node* a, Node* b) {
@@ -37,11 +37,24 @@ vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i 
     auto* start = new Node(startCellIdx.x, startCellIdx.y, 0, manhattanDistance(startCellIdx.x, startCellIdx.y, endCellIdx.x, endCellIdx.y), nullptr); // address of start node
     pq.push(start);
 
-    // Define possible movement directions (up, down, left, right, diagonal, topleft, bottomleft, topright, bottomright)
+    // Define possible movement directions (left, right, up, down, topleft, topright, bottomleft, bottomright)
     constexpr int dx[] = {-1, 1, 0, 0, -1, 1, -1, 1};
     constexpr int dy[] = {0, 0, -1, 1, -1, -1, 1, 1};
 
+    bool stopLoop = false;
+
     while (!pq.empty()) {
+        // check for search cancel
+        while (window.pollEvent(event)) {
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape) {
+                stopLoop = true;
+                cout << "Pathfinding paused" << endl;
+                break;
+            }
+        }
+
+        if (stopLoop) break;
+
         Node* current = pq.top();
         pq.pop();
 

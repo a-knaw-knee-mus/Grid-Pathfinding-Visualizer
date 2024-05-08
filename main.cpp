@@ -18,13 +18,17 @@ int main() {
     int speed = 20; // ms delay between frames
     const int minSpeed = 0, maxSpeed = 200;
     int cellSize = 10;
-    const int minCellSize = 4, maxCellSize = 20;
+    const int minCellSize = 4, maxCellSize = 30;
     const int windowSize = 500;
     int gridSize = windowSize / cellSize;
     bool allowDiagonal = false;
 
     // extra 350px horizontal for instructions
     RenderWindow window(VideoMode(windowSize + 350, windowSize+1), "Pathfinding Visualizer", Style::Titlebar | Style::Close);
+
+    Image icon;
+    icon.loadFromFile("../images/bullsEye.jpg");
+    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
     vector<vector<cellState>> cellStates(gridSize, vector<cellState>(gridSize, Clear));
 
@@ -36,8 +40,8 @@ int main() {
 
     bool isLeftMousePressed = false;
     bool isRightMousePressed = false;
-    bool sKeyPressed = false;
-    bool eKeyPressed = false;
+    bool setStart = false;
+    bool setEnd = false;
     bool searching = false;
 
     int startCellIdx[2] = {-1, -1}; // coords for start cell
@@ -132,13 +136,13 @@ int main() {
             }
 
             // set start cell
-            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::S) {
-                sKeyPressed = true;
+            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::A) {
+                setStart = true;
             }
-            else if (event.type == Event::KeyReleased && event.key.code == Keyboard::S) {
-                sKeyPressed = false;
+            else if (event.type == Event::KeyReleased && event.key.code == Keyboard::A) {
+                setStart = false;
             }
-            else if (sKeyPressed && event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+            else if (setStart && event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 Vector2i mousePosition = Mouse::getPosition(window);
                 int cellX = mousePosition.x / cellSize;
                 int cellY = mousePosition.y / cellSize;
@@ -163,13 +167,13 @@ int main() {
             }
 
             // set end cell
-            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::E) {
-                eKeyPressed = true;
+            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::S) {
+                setEnd = true;
             }
-            else if (event.type == Event::KeyReleased && event.key.code == Keyboard::E) {
-                eKeyPressed = false;
+            else if (event.type == Event::KeyReleased && event.key.code == Keyboard::S) {
+                setEnd = false;
             }
-            else if (eKeyPressed && event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+            else if (setEnd && event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 Vector2i mousePosition = Mouse::getPosition(window);
                 int cellX = mousePosition.x / cellSize;
                 int cellY = mousePosition.y / cellSize;
@@ -251,7 +255,7 @@ int main() {
         vector<string> legendParams = {searchType, to_string(speed), to_string(cellSize), allowDiagonal ? "Yes" : "No"};
 
         if (searching) {
-            vector<Vector2i> path = findPath(cellStates, {startCellIdx[0], startCellIdx[1]}, {endCellIdx[0], endCellIdx[1]}, allowDiagonal, cell, window, cellSize, speed, legendParams);
+            vector<Vector2i> path = findPath(cellStates, {startCellIdx[0], startCellIdx[1]}, {endCellIdx[0], endCellIdx[1]}, allowDiagonal, cell, window, event, cellSize, speed, legendParams);
             if (path.empty()) {
                 cout << "No Path Found" << endl;
             } else {

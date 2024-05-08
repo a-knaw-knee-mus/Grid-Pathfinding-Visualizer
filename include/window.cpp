@@ -9,12 +9,12 @@ void addLegend(RenderWindow& window, vector<string>& legendParams) {
     Font regularFont, boldFont;
     Text text;
     int startX = 520;
-    int startY = 13; // vertical offset
+    int startY = 28; // vertical offset
 
-    if (!regularFont.loadFromFile("C:/Users/Muhammad/OneDrive/Documents/Code/cpp_search/fonts/JetBrainsMono-Regular.ttf")) {
+    if (!regularFont.loadFromFile("../fonts/JetBrainsMono-Regular.ttf")) {
         cerr << "Failed to load JetBrainsMono-Regular.ttf" << endl;
     }
-    if (!boldFont.loadFromFile("C:/Users/Muhammad/OneDrive/Documents/Code/cpp_search/fonts/JetBrainsMono-Bold.ttf")) {
+    if (!boldFont.loadFromFile("../fonts/JetBrainsMono-Bold.ttf")) {
         cerr << "Failed to load JetBrainsMono-Bold.ttf" << endl;
     }
 
@@ -33,7 +33,7 @@ void addLegend(RenderWindow& window, vector<string>& legendParams) {
     window.draw(text);
 
     text.setFont(regularFont);
-    text.setString("A*: 1   B: 2   C: 3");
+    text.setString("A*: 1");
     text.setCharacterSize(14);
     text.setPosition(startX, startY+52);
     window.draw(text);
@@ -77,55 +77,61 @@ void addLegend(RenderWindow& window, vector<string>& legendParams) {
     text.setFont(boldFont);
     text.setString("Generate Walls: Q");
     text.setCharacterSize(14);
-    text.setPosition(startX, startY+250);
+    text.setPosition(startX, startY+230);
     window.draw(text);
 
     text.setFont(boldFont);
     text.setString("Generate Maze:  W");
     text.setCharacterSize(14);
-    text.setPosition(startX, startY+280);
+    text.setPosition(startX, startY+255);
     window.draw(text);
 
     text.setFont(boldFont);
     text.setString("Restart:        R");
     text.setCharacterSize(14);
-    text.setPosition(startX, startY+310);
+    text.setPosition(startX, startY+280);
     window.draw(text);
 
     text.setFont(boldFont);
     text.setString("Set Wall:       Hold Left Click");
     text.setCharacterSize(14);
-    text.setPosition(startX, startY+340);
+    text.setPosition(startX, startY+305);
     window.draw(text);
 
     text.setFont(boldFont);
     text.setString("Remove Wall:    Hold Right Click");
     text.setCharacterSize(14);
-    text.setPosition(startX, startY+370);
+    text.setPosition(startX, startY+330);
     window.draw(text);
 
     text.setFont(boldFont);
     text.setString("Set Start:      S + Left Click");
     text.setCharacterSize(14);
-    text.setPosition(startX, startY+400);
+    text.setPosition(startX, startY+355);
     window.draw(text);
 
     text.setFont(boldFont);
     text.setString("Set End:        E + Right Click");
     text.setCharacterSize(14);
-    text.setPosition(startX, startY+430);
+    text.setPosition(startX, startY+380);
     window.draw(text);
 
     text.setFont(boldFont);
     text.setString("Begin Search:   Enter");
     text.setCharacterSize(14);
-    text.setPosition(startX, startY+460);
+    text.setPosition(startX, startY+405);
+    window.draw(text);
+
+    text.setFont(boldFont);
+    text.setString("Pause Search:   Esc");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+430);
     window.draw(text);
 }
 
 // clear everything from the screen
 void refreshScreen(RenderWindow& window, RectangleShape& cell, const vector<vector<cellState>>& cellStates, int gridSize, int cellSize, vector<string>& legendParams) {
-    window.clear(Color(255, 229, 204));
+    window.clear(Color::White);
 
     // Draw the grid of cells
     for (int x = 0; x < gridSize; x++) {

@@ -10,7 +10,7 @@ using namespace std;
 using namespace sf;
 
 // Remove Visited, VisitedInQueue and Path Cells
-void resetPathFinding(const int gridSize, vector<vector<cellState>>& cellStates) {
+void resetPathfinding(const int gridSize, vector<vector<cellState>>& cellStates) {
     for (int x = 0; x < gridSize; ++x) {
         for (int y = 0; y < gridSize; ++y) {
             if (cellStates[x][y] == Visited || cellStates[x][y] == Path || cellStates[x][y] == VisitedInQueue) {
@@ -51,8 +51,8 @@ int main() {
     bool setEnd = false;
     bool searching = false;
 
-    int startCellIdx[2] = {-1, -1}; // coords for start cell
-    int endCellIdx[2] = {-1, -1};   // coorsd for end cell
+    Vector2i startCell = {-1, -1}; // coords for start cell
+    Vector2i endCell = {-1, -1};   // coorsd for end cell
 
     while (window.isOpen()) {
         Event event{};
@@ -79,6 +79,9 @@ int main() {
                         cellStates[i][j] = Clear;
                     }
                 }
+
+                startCell = {-1, -1};
+                endCell = {-1, -1};
             }
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Down) {
                 if (cellSize - 2 < minCellSize) continue;
@@ -96,6 +99,9 @@ int main() {
                         cellStates[i][j] = Clear;
                     }
                 }
+
+                startCell = {-1, -1};
+                endCell = {-1, -1};
             }
 
             // change animation speed
@@ -120,24 +126,28 @@ int main() {
                         cellStates[x][y] = Clear;
                     }
                 }
-                startCellIdx[0] = -1, startCellIdx[1] = -1;
-                endCellIdx[0] = -1, endCellIdx[1] = -1;
+                startCell = {-1, -1};
+                endCell = {-1, -1};
             }
 
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::W) {
                 generateRandomMaze(cellStates, gridSize);
+                startCell = {-1, -1};
+                endCell = {-1, -1};
             }
 
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Q) {
-                placeRandomWalls(cellStates, gridSize, gridSize*gridSize*0.7/2); // half of the cells should be walls
+                placeRandomWalls(cellStates, gridSize, gridSize*gridSize*0.35); // 35% of the cells should be walls
+                startCell = {-1, -1};
+                endCell = {-1, -1};
             }
 
             // run search algorithm
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Enter) {
-                if (startCellIdx[0] == -1 || startCellIdx[1] == -1) continue;
-                if (endCellIdx[0] == -1 || endCellIdx[1] == -1) continue;
+                if (startCell.x == -1 || startCell.y == -1) continue;
+                if (endCell.x == -1 || endCell.y == -1) continue;
                 searching = true;
-                resetPathFinding(gridSize, cellStates);
+                resetPathfinding(gridSize, cellStates);
                 cout << "Run Search" << endl;
             }
 
@@ -150,19 +160,19 @@ int main() {
             }
             else if (setStart && event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 Vector2i mousePosition = Mouse::getPosition(window);
-                int cellX = mousePosition.x / cellSize;
-                int cellY = mousePosition.y / cellSize;
-                if (cellX >= 0 && cellX < gridSize && cellY >= 0 && cellY < gridSize) {
-                    cellStates[cellX][cellY] = Start;
+                Vector2i cell = {mousePosition.x / cellSize, mousePosition.y / cellSize};
+                if (cell.x < 0 || cell.x >= gridSize || cell.y < 0 || cell.y >= gridSize) continue;
+                cellStates[cell.x][cell.y] = Start;
+                if (startCell.x != -1 && startCell.y != -1) { // remove last selected start cell
+                    cellStates[startCell.x][startCell.y] = Clear;
                 }
-                if (startCellIdx[0] != -1 && startCellIdx[1] != -1) { // remove last selected start cell
-                    cellStates[startCellIdx[0]][startCellIdx[1]] = Clear;
+                if (cell.x == endCell.x && cell.y == endCell.y) {
+                    endCell = {-1, -1};
                 }
                 // save new location for start cell
-                startCellIdx[0] = cellX;
-                startCellIdx[1] = cellY;
+                startCell = cell;
 
-                resetPathFinding(gridSize, cellStates);
+                resetPathfinding(gridSize, cellStates);
             }
 
             // set end cell
@@ -174,19 +184,19 @@ int main() {
             }
             else if (setEnd && event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 Vector2i mousePosition = Mouse::getPosition(window);
-                int cellX = mousePosition.x / cellSize;
-                int cellY = mousePosition.y / cellSize;
-                if (cellX >= 0 && cellX < gridSize && cellY >= 0 && cellY < gridSize) {
-                    cellStates[cellX][cellY] = End;
+                Vector2i cell = {mousePosition.x / cellSize, mousePosition.y / cellSize};
+                if (cell.x < 0 || cell.x >= gridSize || cell.y < 0 || cell.y >= gridSize) continue;
+                cellStates[cell.x][cell.y] = End;
+                if (endCell.x != -1 && endCell.y != -1) { // remove last selected end cell
+                    cellStates[endCell.x][endCell.y] = Clear;
                 }
-                if (endCellIdx[0] != -1 && endCellIdx[1] != -1) { // remove last selected end cell
-                    cellStates[endCellIdx[0]][endCellIdx[1]] = Clear;
+                if (cell.x == startCell.x && cell.y == startCell.y) {
+                    startCell = {-1, -1};
                 }
                 // save new location for end cell
-                endCellIdx[0] = cellX;
-                endCellIdx[1] = cellY;
+                endCell = cell;
 
-                resetPathFinding(gridSize, cellStates);
+                resetPathfinding(gridSize, cellStates);
             }
 
             // draw/undraw walls
@@ -208,30 +218,45 @@ int main() {
             }
             else if (isLeftMousePressed && Mouse::isButtonPressed(Mouse::Left)) {
                 Vector2i mousePosition = Mouse::getPosition(window);
-                int cellX = mousePosition.x / cellSize;
-                int cellY = mousePosition.y / cellSize;
-                if (cellX >= 0 && cellX < gridSize && cellY >= 0 && cellY < gridSize) {
-                    cellStates[cellX][cellY] = Wall;
+                Vector2i cell = {mousePosition.x / cellSize, mousePosition.y / cellSize};
+                if (cell.x < 0 || cell.x >= gridSize || cell.y < 0 || cell.y >= gridSize) continue;
+                if (cell.x >= 0 && cell.x < gridSize && cell.y >= 0 && cell.y < gridSize) {
+                    cellStates[cell.x][cell.y] = Wall;
                 }
 
-                resetPathFinding(gridSize, cellStates);
+                if (cell.x == startCell.x && cell.y == startCell.y) {
+                    startCell = {-1, -1};
+                }
+                if (cell.x == endCell.x &&
+                    cell.y == endCell.y) {
+                    endCell = {-1, -1};
+                }
+
+                resetPathfinding(gridSize, cellStates);
             }
             else if (isRightMousePressed && Mouse::isButtonPressed(Mouse::Right)) {
                 Vector2i mousePosition = Mouse::getPosition(window);
-                int cellX = mousePosition.x / cellSize;
-                int cellY = mousePosition.y / cellSize;
-                if (cellX >= 0 && cellX < gridSize && cellY >= 0 && cellY < gridSize) {
-                    cellStates[cellX][cellY] = Clear;
+                Vector2i cell = {mousePosition.x / cellSize, mousePosition.y / cellSize};
+                if (cell.x < 0 || cell.x >= gridSize || cell.y < 0 || cell.y >= gridSize) continue;
+                if (cell.x >= 0 && cell.x < gridSize && cell.y >= 0 && cell.y < gridSize) {
+                    cellStates[cell.x][cell.y] = Clear;
                 }
 
-                resetPathFinding(gridSize, cellStates);
+                if (cell.x == endCell.x &&  cell.y == endCell.y) {
+                    startCell = {-1, -1};
+                }
+                if (cell.x == endCell.x &&  cell.y == endCell.y) {
+                    endCell = {-1, -1};
+                }
+
+                resetPathfinding(gridSize, cellStates);
             }
         }
 
         vector<string> legendParams = {searchType, to_string(speed), to_string(cellSize), allowDiagonal ? "Yes" : "No"};
 
         if (searching) {
-            vector<Vector2i> path = findPath(cellStates, {startCellIdx[0], startCellIdx[1]}, {endCellIdx[0], endCellIdx[1]}, allowDiagonal, cell, window, event, cellSize, speed, legendParams);
+            vector<Vector2i> path = findPath(cellStates, startCell, endCell, allowDiagonal, cell, window, event, cellSize, speed, legendParams);
             for (const auto& node : path) {
                 cellStates[node.x][node.y] = Path;
                 chrono::milliseconds duration(speed);

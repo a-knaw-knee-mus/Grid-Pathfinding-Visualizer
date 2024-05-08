@@ -7,4 +7,5 @@ enum cellState {
     End,
     Path,
     Visited,
+    VisitedInQueue,
 };

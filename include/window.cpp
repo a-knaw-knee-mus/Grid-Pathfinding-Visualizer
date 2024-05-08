@@ -140,13 +140,15 @@ void refreshScreen(RenderWindow& window, RectangleShape& cell, const vector<vect
             if (cellStates[x][y] == Wall) {
                 cell.setFillColor(Color::Black);
             } else if (cellStates[x][y] == Start) {
-                cell.setFillColor(Color::Red);
+                cell.setFillColor(Color(255, 102, 102));
             } else if (cellStates[x][y] == End) {
-                cell.setFillColor(Color::Green);
+                cell.setFillColor(Color(255, 178, 102));
             } else if (cellStates[x][y] == Visited) {
-                cell.setFillColor(Color::Cyan);
+                cell.setFillColor(Color(175, 238, 238));
             } else if (cellStates[x][y] == Path) {
-                cell.setFillColor(Color::Magenta);
+                cell.setFillColor(Color(204, 153, 255));
+            } else if (cellStates[x][y] == VisitedInQueue) {
+                cell.setFillColor(Color(152, 251, 152));
             } else {
                 cell.setFillColor(Color::White);
             }

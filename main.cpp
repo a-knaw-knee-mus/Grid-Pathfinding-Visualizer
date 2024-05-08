@@ -118,7 +118,7 @@ int main() {
             }
 
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Q) {
-                placeRandomWalls(cellStates, gridSize, gridSize*gridSize/2); // half of the cells should be walls
+                placeRandomWalls(cellStates, gridSize, gridSize*gridSize*0.7/2); // half of the cells should be walls
             }
 
             // run search algorithm
@@ -126,7 +126,7 @@ int main() {
                 if (startCellIdx[0] == -1 || startCellIdx[1] == -1) continue;
                 if (endCellIdx[0] == -1 || endCellIdx[1] == -1) continue;
                 searching = true;
-                cout << "run search" << endl;
+                cout << "Run Search" << endl;
             }
 
             // set start cell
@@ -153,7 +153,7 @@ int main() {
                 // remove Visited and Path cells
                 for (int x = 0; x < gridSize; ++x) {
                     for (int y = 0; y < gridSize; ++y) {
-                        if (cellStates[x][y] == Visited || cellStates[x][y] == Path) {
+                        if (cellStates[x][y] == Visited || cellStates[x][y] == Path || cellStates[x][y] == VisitedInQueue) {
                             cellStates[x][y] = Clear;
                         }
                     }
@@ -184,7 +184,7 @@ int main() {
                 // remove Visited and Path cells
                 for (int x = 0; x < gridSize; ++x) {
                     for (int y = 0; y < gridSize; ++y) {
-                        if (cellStates[x][y] == Visited || cellStates[x][y] == Path) {
+                        if (cellStates[x][y] == Visited || cellStates[x][y] == Path || cellStates[x][y] == VisitedInQueue) {
                             cellStates[x][y] = Clear;
                         }
                     }
@@ -220,7 +220,7 @@ int main() {
                 for (int x = 0; x < gridSize; ++x) {
                     for (int y = 0; y < gridSize; ++y) {
                         // adding wall means nodes that were visited may not be visitable anymore so clear
-                        if (cellStates[x][y] == Path || cellStates[x][y] == Visited) {
+                        if (cellStates[x][y] == Path || cellStates[x][y] == Visited || cellStates[x][y] == VisitedInQueue) {
                             cellStates[x][y] = Clear;
                         }
                     }
@@ -250,15 +250,11 @@ int main() {
 
         if (searching) {
             vector<Vector2i> path = findPath(cellStates, {startCellIdx[0], startCellIdx[1]}, {endCellIdx[0], endCellIdx[1]}, allowDiagonal, cell, window, event, cellSize, speed, legendParams);
-            if (path.empty()) {
-                cout << "No Path Found" << endl;
-            } else {
-                for (const auto& node : path) {
-                    cellStates[node.x][node.y] = Path;
-                    chrono::milliseconds duration(speed);
-                    this_thread::sleep_for(duration);
-                    refreshScreen(window, cell, cellStates, gridSize, cellSize, legendParams);
-                }
+            for (const auto& node : path) {
+                cellStates[node.x][node.y] = Path;
+                chrono::milliseconds duration(speed);
+                this_thread::sleep_for(duration);
+                refreshScreen(window, cell, cellStates, gridSize, cellSize, legendParams);
             }
             searching = false;
         }

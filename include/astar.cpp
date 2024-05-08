@@ -48,7 +48,7 @@ vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i 
         while (window.pollEvent(event)) {
             if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape) {
                 stopLoop = true;
-                cout << "Pathfinding paused" << endl;
+                cout << "Paused" << endl;
                 break;
             }
         }
@@ -57,6 +57,12 @@ vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i 
 
         Node* current = pq.top();
         pq.pop();
+
+        visited[current->x][current->y] = true;
+
+        if (current->parent != nullptr && cellStates[current->parent->x][current->parent->y] != Start) {
+            cellStates[current->parent->x][current->parent->y] = Visited;
+        }
 
         if (current->x == endCellIdx.x && current->y == endCellIdx.y) {
             // Reached the end cell, reconstruct the path
@@ -67,15 +73,13 @@ vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i 
                 current = current->parent;
             }
             ranges::reverse(path.begin(), path.end());  // Reverse to get correct path order
-            cout << "path found" << endl;
+            cout << "Path Found" << endl;
             break;
         }
 
-        visited[current->x][current->y] = true;
-
         // mark cell as visited except if already marked as Start or End
         if (cellStates[current->x][current->y] == Clear) {
-            cellStates[current->x][current->y] = Visited;
+            cellStates[current->x][current->y] = VisitedInQueue;
             refreshScreen(window, cell, cellStates, cellStates.size(), cellSize, legendParams);
             chrono::milliseconds duration(speed);
             this_thread::sleep_for(duration);
@@ -106,5 +110,8 @@ vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i 
         pq.pop();
     }
 
+    if (path.empty()) {
+        cout << "No Path Found. Remove Walls and Try Again." << endl;
+    }
     return path;
 }

@@ -16,7 +16,7 @@ using namespace sf;
 struct Node {
     int x, y;  // Node position
     int costFromStart;  // Cost from start to this node
-    int costToEnd;
+    int costToEnd;      // Cost from this node to end
     Node* parent;  // Parent node
 
     Node(const int x, const int y, const int costFromStart, const int costToEnd, Node* parent) : x(x), y(y), costFromStart(costFromStart), costToEnd(costToEnd), parent(parent) {}

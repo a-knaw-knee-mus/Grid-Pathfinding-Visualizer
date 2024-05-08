@@ -9,10 +9,6 @@
 using namespace std;
 using namespace sf;
 
-string getTitle(const string& searchType, int speed, int cellSize) {
-    return "PATHFINDING - Algo: " + searchType + " | Speed: " + to_string(speed) + "ms | Cell Size: " + to_string(cellSize) + "px";
-}
-
 int main() {
     string searchType = "AStar";
     int speed = 20; // ms delay between frames
@@ -72,7 +68,6 @@ int main() {
                         cellStates[i][j] = Clear;
                     }
                 }
-                // refreshScreen(window, cell, cellStates, gridSize, cellSize);
             }
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Down) {
                 if (cellSize - 2 < minCellSize) continue;
@@ -90,7 +85,6 @@ int main() {
                         cellStates[i][j] = Clear;
                     }
                 }
-                // refreshScreen(window, cell, cellStates, gridSize, cellSize);
             }
 
             // change animation speed

@@ -23,9 +23,8 @@ int main() {
     int gridSize = windowSize / cellSize;
     bool allowDiagonal = false;
 
-    string title = getTitle(searchType, speed, cellSize);
-    // extra 200px horizontal for instructions
-    RenderWindow window(VideoMode(windowSize + 350, windowSize+1), title, Style::Titlebar | Style::Close);
+    // extra 350px horizontal for instructions
+    RenderWindow window(VideoMode(windowSize + 350, windowSize+1), "Pathfinding Visualizer", Style::Titlebar | Style::Close);
 
     vector<vector<cellState>> cellStates(gridSize, vector<cellState>(gridSize, Clear));
 
@@ -56,8 +55,6 @@ int main() {
                 if (cellSize + 2 > maxCellSize) continue;
                 cellSize += 2;
                 gridSize = windowSize / cellSize;
-                title = getTitle(searchType, speed, cellSize);
-                window.setTitle(title);
 
                 cellStates.resize(gridSize);
                 for (vector<cellState>& row: cellStates) {
@@ -71,14 +68,12 @@ int main() {
                         cellStates[i][j] = Clear;
                     }
                 }
-                refreshScreen(window, cell, cellStates, gridSize, cellSize);
+                // refreshScreen(window, cell, cellStates, gridSize, cellSize);
             }
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Down) {
                 if (cellSize - 2 < minCellSize) continue;
                 cellSize -= 2;
                 gridSize = windowSize / cellSize;
-                title = getTitle(searchType, speed, cellSize);
-                window.setTitle(title);
 
                 cellStates.resize(gridSize);
                 for (vector<cellState>& row: cellStates) {
@@ -91,21 +86,22 @@ int main() {
                         cellStates[i][j] = Clear;
                     }
                 }
-                refreshScreen(window, cell, cellStates, gridSize, cellSize);
+                // refreshScreen(window, cell, cellStates, gridSize, cellSize);
             }
 
             // change animation speed
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Right) {
                 if (speed + 10 > maxSpeed) continue;
                 speed += 10;
-                title = getTitle(searchType, speed, cellSize);
-                window.setTitle(title);
             }
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Left) {
                 if (speed - 10 < minSpeed) continue;
                 speed -= 10;
-                title = getTitle(searchType, speed, cellSize);
-                window.setTitle(title);
+            }
+
+            // toggle diagonal only
+            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::D) {
+                allowDiagonal = !allowDiagonal;
             }
 
             // reset cells
@@ -119,11 +115,11 @@ int main() {
                 endCellIdx[0] = -1, endCellIdx[1] = -1;
             }
 
-            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::T) {
+            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::W) {
                 generateRandomMaze(cellStates, gridSize);
             }
 
-            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Y) {
+            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Q) {
                 placeRandomWalls(cellStates, gridSize, gridSize*gridSize/2); // half of the cells should be walls
             }
 
@@ -252,8 +248,10 @@ int main() {
             }
         }
 
+        vector<string> legendParams = {searchType, to_string(speed), to_string(cellSize), allowDiagonal ? "Yes" : "No"};
+
         if (searching) {
-            vector<Vector2i> path = findPath(cellStates, {startCellIdx[0], startCellIdx[1]}, {endCellIdx[0], endCellIdx[1]}, allowDiagonal, cell, window, cellSize, speed);
+            vector<Vector2i> path = findPath(cellStates, {startCellIdx[0], startCellIdx[1]}, {endCellIdx[0], endCellIdx[1]}, allowDiagonal, cell, window, cellSize, speed, legendParams);
             if (path.empty()) {
                 cout << "No Path Found" << endl;
             } else {
@@ -261,13 +259,13 @@ int main() {
                     cellStates[node.x][node.y] = Path;
                     chrono::milliseconds duration(speed);
                     this_thread::sleep_for(duration);
-                    refreshScreen(window, cell, cellStates, gridSize, cellSize);
+                    refreshScreen(window, cell, cellStates, gridSize, cellSize, legendParams);
                 }
             }
             searching = false;
         }
 
-        refreshScreen(window, cell, cellStates, gridSize, cellSize);
+        refreshScreen(window, cell, cellStates, gridSize, cellSize, legendParams);
     }
     return 0;
 }

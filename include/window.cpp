@@ -5,7 +5,7 @@
 using namespace sf;
 using namespace std;
 
-void addLegend(RenderWindow& window) {
+void addLegend(RenderWindow& window, vector<string>& legendParams) {
     Font regularFont, boldFont;
     Text text;
     int startX = 520;
@@ -27,7 +27,7 @@ void addLegend(RenderWindow& window) {
     window.draw(text);
 
     text.setFont(boldFont);
-    text.setString("Algorithm Name");
+    text.setString("Algorithm Name = " + legendParams[0]);
     text.setCharacterSize(14);
     text.setPosition(startX, startY+35);
     window.draw(text);
@@ -39,7 +39,7 @@ void addLegend(RenderWindow& window) {
     window.draw(text);
 
     text.setFont(boldFont);
-    text.setString("Animation Speed");
+    text.setString("Animation Speed = " + legendParams[1] + "ms");
     text.setCharacterSize(14);
     text.setPosition(startX, startY+80);
     window.draw(text);
@@ -51,7 +51,7 @@ void addLegend(RenderWindow& window) {
     window.draw(text);
 
     text.setFont(boldFont);
-    text.setString("Cell Size");
+    text.setString("Cell Size = " + legendParams[2] + "px");
     text.setCharacterSize(14);
     text.setPosition(startX, startY+125);
     window.draw(text);
@@ -63,7 +63,7 @@ void addLegend(RenderWindow& window) {
     window.draw(text);
 
     text.setFont(boldFont);
-    text.setString("Allow Diagonal Paths");
+    text.setString("Allow Diagonal Paths = " + legendParams[3]);
     text.setCharacterSize(14);
     text.setPosition(startX, startY+170);
     window.draw(text);
@@ -124,7 +124,7 @@ void addLegend(RenderWindow& window) {
 }
 
 // clear everything from the screen
-void refreshScreen(RenderWindow& window, RectangleShape& cell, const vector<vector<cellState>>& cellStates, int gridSize, int cellSize) {
+void refreshScreen(RenderWindow& window, RectangleShape& cell, const vector<vector<cellState>>& cellStates, int gridSize, int cellSize, vector<string>& legendParams) {
     window.clear(Color(255, 229, 204));
 
     // Draw the grid of cells
@@ -149,7 +149,7 @@ void refreshScreen(RenderWindow& window, RectangleShape& cell, const vector<vect
         }
     }
 
-    addLegend(window);
+    addLegend(window, legendParams);
 
     window.display();
 }

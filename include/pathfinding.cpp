@@ -13,15 +13,6 @@
 using namespace std;
 using namespace sf;
 
-struct Node {
-    int x, y;  // Node position
-    int costFromStart;  // Cost from start to this node
-    int costToEnd;      // Cost from this node to end
-    Node* parent;  // Parent node
-
-    Node(const int x, const int y, const int costFromStart, const int costToEnd, Node* parent) : x(x), y(y), costFromStart(costFromStart), costToEnd(costToEnd), parent(parent) {}
-};
-
 // Calculate Manhattan distance between two points
 int manhattanDistance(const int x1, const int y1, const int x2, const int y2) {
     return abs(x1 - x2) + abs(y1 - y2);
@@ -33,8 +24,25 @@ bool isStartOrEnd(const int x, const int y, const Vector2i start, const Vector2i
     return false;
 }
 
+// BFS algorithm implementation
+// vector<Vector2i> findPathBFS(vector<vector<cellState>>& cellStates, const Vector2i startCellIdx, const Vector2i endCellIdx, const bool allowDiagonal, RectangleShape& cell, RenderWindow& window, Event& event, int cellSize, int speed, vector<string>& legendParams) {
+//     struct Node {
+//         int x, y; // Node position
+//         Node* parent;
+//     };
+// }
+
 // A* algorithm implementation
-vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i startCellIdx, const Vector2i endCellIdx, const bool allowDiagonal, RectangleShape& cell, RenderWindow& window, Event& event, int cellSize, int speed, vector<string>& legendParams) {
+vector<Vector2i> findPathAStar(vector<vector<cellState>>& cellStates, const Vector2i startCellIdx, const Vector2i endCellIdx, const bool allowDiagonal, RectangleShape& cell, RenderWindow& window, Event& event, const int cellSize, const int speed, vector<string>& legendParams) {
+    struct Node {
+        int x, y;  // Node position
+        int costFromStart;  // Cost from start to this node
+        int costToEnd;      // Cost from this node to end
+        Node* parent;  // Parent node
+
+        Node(const int x, const int y, const int costFromStart, const int costToEnd, Node* parent) : x(x), y(y), costFromStart(costFromStart), costToEnd(costToEnd), parent(parent) {}
+    };
+
     vector<Vector2i> path;
     vector<vector<bool>> visited(cellStates.size(), vector<bool>(cellStates[0].size(), false));
     priority_queue<Node*, vector<Node*>, function<bool(Node*, Node*)>> pq([](Node* a, Node* b) {

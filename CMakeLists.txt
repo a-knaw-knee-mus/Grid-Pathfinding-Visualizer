@@ -3,7 +3,7 @@ project(cpp_search)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(cpp_search main.cpp include/astar.cpp include/window.cpp)
+add_executable(cpp_search main.cpp include/pathfinding.cpp include/window.cpp)
 
 set(SFML_STATIC_LIBRARIES TRUE)
 set(SFML_DIR C:/Program Files/SFML/lib/cmake/SFML)

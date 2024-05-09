@@ -7,7 +7,7 @@
 #include <filesystem>
 #include "include/states.h"
 #include "include/window.h"
-#include "include/astar.h"
+#include "include/pathfinding.h"
 using namespace std;
 using namespace sf;
 
@@ -24,7 +24,7 @@ void resetPathfinding(const int gridSize, vector<vector<cellState>>& cellStates)
 
 int main() {
     string searchType = "AStar";
-    int speedIdx = 0;
+    int speedIdx = 1;
     const vector<int> speeds = {0, 1, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 160, 180, 200}; // ms delay between frames
     int cellSizeIdx = 3;
     const vector<int> cellSizes = {4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30}; // px size per cell
@@ -293,7 +293,7 @@ int main() {
         vector<string> legendParams = {searchType, to_string(speeds[speedIdx]), to_string(cellSizes[cellSizeIdx]), allowDiagonal ? "Yes" : "No"};
 
         if (searching) {
-            vector<Vector2i> path = findPath(cellStates, startCell, endCell, allowDiagonal, cell, window, event, cellSizes[cellSizeIdx], speeds[speedIdx], legendParams);
+            vector<Vector2i> path = findPathAStar(cellStates, startCell, endCell, allowDiagonal, cell, window, event, cellSizes[cellSizeIdx], speeds[speedIdx], legendParams);
             for (const auto& node : path) {
                 cellStates[node.x][node.y] = Path;
                 chrono::milliseconds duration(speeds[speedIdx]);

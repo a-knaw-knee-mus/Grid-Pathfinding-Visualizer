@@ -70,13 +70,25 @@ vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i 
             cellStates[current->x][current->y] = Visited;
             if (speed != 0) {
                 refreshScreen(window, cell, cellStates, cellStates.size(), cellSize, legendParams);
-                chrono::milliseconds duration(speed);
+                chrono::milliseconds duration(speed == 1 ? 0 : speed); // if speed is 1ms, set to 0ms. still animated but 1ms faster
                 this_thread::sleep_for(duration);
             }
         }
 
         if (current->x == endCellIdx.x && current->y == endCellIdx.y) {
-            // Reached the end cell, reconstruct the path
+            // Reached the end cell
+
+            int numVisited = 0;
+            for (auto& row: visited) {
+                for (auto col: row) {
+                    if (col) numVisited += 1;
+                }
+            }
+            numVisited -= 1; // start cell marked as visited so remove 1
+
+            const int cost = current->costFromStart;
+
+            // Reconstruct the path
             while (current != nullptr) {
                 if (!isStartOrEnd(current->x, current->y, startCellIdx, endCellIdx)) {
                     path.emplace_back(current->x, current->y);
@@ -84,6 +96,7 @@ vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i 
                 current = current->parent;
             }
             ranges::reverse(path.begin(), path.end());  // Reverse to get correct path order
+            window.setTitle("Pathfinding Visualizer     Cost: " + to_string(cost) + "   Visited: " + to_string(numVisited));
             cout << "Path Found" << endl;
             break;
         }

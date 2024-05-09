@@ -82,6 +82,8 @@ int main() {
 
                 startCell = {-1, -1};
                 endCell = {-1, -1};
+
+                window.setTitle("Pathfinding Visualizer");
             }
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Down) {
                 if (cellSizeIdx-1 < 0) continue;
@@ -102,6 +104,8 @@ int main() {
 
                 startCell = {-1, -1};
                 endCell = {-1, -1};
+
+                window.setTitle("Pathfinding Visualizer");
             }
 
             // change animation speed
@@ -134,12 +138,14 @@ int main() {
                 generateRandomMaze(cellStates, gridSize);
                 startCell = {-1, -1};
                 endCell = {-1, -1};
+                window.setTitle("Pathfinding Visualizer");
             }
 
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Q) {
                 placeRandomWalls(cellStates, gridSize, gridSize*gridSize*0.35); // 35% of the cells should be walls
                 startCell = {-1, -1};
                 endCell = {-1, -1};
+                window.setTitle("Pathfinding Visualizer");
             }
 
             // run search algorithm
@@ -147,6 +153,7 @@ int main() {
                 if (startCell.x == -1 || startCell.y == -1) continue;
                 if (endCell.x == -1 || endCell.y == -1) continue;
                 searching = true;
+                window.setTitle("Pathfinding Visualizer");
                 resetPathfinding(gridSize, cellStates);
                 cout << "Run Search" << endl;
             }
@@ -172,6 +179,7 @@ int main() {
                 // save new location for start cell
                 startCell = cell;
 
+                window.setTitle("Pathfinding Visualizer");
                 resetPathfinding(gridSize, cellStates);
             }
 
@@ -196,6 +204,7 @@ int main() {
                 // save new location for end cell
                 endCell = cell;
 
+                window.setTitle("Pathfinding Visualizer");
                 resetPathfinding(gridSize, cellStates);
             }
 
@@ -231,6 +240,7 @@ int main() {
                     endCell = {-1, -1};
                 }
 
+                window.setTitle("Pathfinding Visualizer");
                 resetPathfinding(gridSize, cellStates);
             }
             else if (isRightMousePressed && Mouse::isButtonPressed(Mouse::Right)) {
@@ -248,6 +258,7 @@ int main() {
                     endCell = {-1, -1};
                 }
 
+                window.setTitle("Pathfinding Visualizer");
                 resetPathfinding(gridSize, cellStates);
             }
         }

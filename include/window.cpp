@@ -9,7 +9,7 @@ void addLegend(RenderWindow& window, vector<string>& legendParams) {
     Font regularFont, boldFont;
     Text text;
     int startX = 520;
-    int startY = 28; // vertical offset
+    int startY = 15; // vertical offset
 
     if (!regularFont.loadFromFile("../fonts/JetBrainsMono-Regular.ttf")) {
         cerr << "Failed to load JetBrainsMono-Regular.ttf" << endl;
@@ -111,7 +111,7 @@ void addLegend(RenderWindow& window, vector<string>& legendParams) {
     window.draw(text);
 
     text.setFont(boldFont);
-    text.setString("Set End:        E + Right Click");
+    text.setString("Set End:        E + Left Click");
     text.setCharacterSize(14);
     text.setPosition(startX, startY+380);
     window.draw(text);
@@ -126,6 +126,12 @@ void addLegend(RenderWindow& window, vector<string>& legendParams) {
     text.setString("Pause Search:   Esc");
     text.setCharacterSize(14);
     text.setPosition(startX, startY+430);
+    window.draw(text);
+
+    text.setFont(boldFont);
+    text.setString("Screenshot:     P");
+    text.setCharacterSize(14);
+    text.setPosition(startX, startY+455);
     window.draw(text);
 }
 
@@ -149,6 +155,8 @@ void refreshScreen(RenderWindow& window, RectangleShape& cell, const vector<vect
                 cell.setFillColor(Color(204, 153, 255));
             } else if (cellStates[x][y] == VisitedInQueue) {
                 cell.setFillColor(Color(152, 251, 152));
+            } else if (cellStates[x][y] == CurrentCell) {
+                cell.setFillColor(Color(178, 102, 255));
             } else {
                 cell.setFillColor(Color::White);
             }

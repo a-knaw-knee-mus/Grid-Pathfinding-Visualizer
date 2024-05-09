@@ -33,7 +33,7 @@ int main() {
     bool allowDiagonal = false;
 
     // extra 350px horizontal for instructions
-    RenderWindow window(VideoMode(windowSize + 350, windowSize+1), "Pathfinding Visualizer", Style::Titlebar | Style::Close);
+    RenderWindow window(VideoMode(windowSize + 310, windowSize+1), "Pathfinding Visualizer", Style::Titlebar | Style::Close);
 
     Image icon;
     icon.loadFromFile("../images/bullsEye.jpg");

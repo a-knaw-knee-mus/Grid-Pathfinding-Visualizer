@@ -60,6 +60,10 @@ vector<Vector2i> findPathAStar(vector<vector<cellState>>& cellStates, const Vect
     while (!pq.empty()) {
         // check for search cancel
         while (window.pollEvent(event)) {
+            if (event.type == Event::Closed) {
+                window.close();
+            }
+
             if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape) {
                 stopLoop = true;
                 cout << "Paused" << endl;
@@ -72,10 +76,14 @@ vector<Vector2i> findPathAStar(vector<vector<cellState>>& cellStates, const Vect
         Node* current = pq.top();
         pq.pop();
 
+        if (visited[current->x][current->y]) continue;
         visited[current->x][current->y] = true;
-
         if (!isStartOrEnd(current->x, current->y, startCellIdx, endCellIdx)) {
-            cellStates[current->x][current->y] = Visited;
+            cellStates[current->x][current->y] = CurrentCell;
+        }
+
+        if (current->parent != nullptr && !isStartOrEnd(current->parent->x, current->parent->y, startCellIdx, endCellIdx)) {
+            cellStates[current->parent->x][current->parent->y] = Visited;
             if (speed != 0) {
                 refreshScreen(window, cell, cellStates, cellStates.size(), cellSize, legendParams);
                 chrono::milliseconds duration(speed == 1 ? 0 : speed); // if speed is 1ms, set to 0ms. still animated but 1ms faster
@@ -129,6 +137,9 @@ vector<Vector2i> findPathAStar(vector<vector<cellState>>& cellStates, const Vect
             pq.push(nextNode);
         }
 
+        if (!isStartOrEnd(current->x, current->y, startCellIdx, endCellIdx)) {
+            cellStates[current->x][current->y] = Visited;
+        }
     }
 
     // Cleanup memory

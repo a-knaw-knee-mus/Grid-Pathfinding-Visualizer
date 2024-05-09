@@ -8,4 +8,5 @@ enum cellState {
     Path,
     Visited,
     VisitedInQueue,
+    CurrentCell,
 };

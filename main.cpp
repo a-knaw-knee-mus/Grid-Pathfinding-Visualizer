@@ -2,7 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <chrono>
+#include <ctime>
 #include <thread>
+#include <filesystem>
 #include "include/states.h"
 #include "include/window.h"
 #include "include/astar.h"
@@ -47,6 +49,7 @@ int main() {
 
     bool isLeftMousePressed = false;
     bool isRightMousePressed = false;
+    bool isSsPressed = false;
     bool setStart = false;
     bool setEnd = false;
     bool searching = false;
@@ -260,6 +263,30 @@ int main() {
 
                 window.setTitle("Pathfinding Visualizer");
                 resetPathfinding(gridSize, cellStates);
+            }
+
+            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::P) {
+                isSsPressed = true;
+            }
+            else if (event.type == Event::KeyReleased && event.key.code == Keyboard::P) {
+                Texture texture;
+                texture.create(window.getSize().x, window.getSize().y);
+                texture.update(window);
+
+                time_t now = time(nullptr);
+                tm localTime = *localtime(&now);
+                stringstream ss;
+                ss << put_time(&localTime, "%Y-%m-%d_%H-%M-%S");
+                const string suffix = ss.str();
+
+                if (!filesystem::exists("screenshots")) {
+                    filesystem::create_directory("screenshots");
+                }
+                if (texture.copyToImage().saveToFile("screenshots/path-" + suffix + ".png")) {
+                    cout << "Screenshot saved" << endl;
+                } else {
+                    cerr << "Failed to save screenshot" << endl;
+                }
             }
         }
 

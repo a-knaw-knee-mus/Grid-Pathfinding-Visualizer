@@ -33,7 +33,7 @@ int main() {
     bool allowDiagonal = false;
 
     // extra 350px horizontal for instructions
-    RenderWindow window(VideoMode(windowSize + 310, windowSize+1), "Pathfinding Visualizer", Style::Titlebar | Style::Close);
+    RenderWindow window(VideoMode(windowSize + 325, windowSize+1), "Pathfinding Visualizer", Style::Titlebar | Style::Close);
 
     Image icon;
     icon.loadFromFile("../images/bullsEye.jpg");
@@ -49,9 +49,7 @@ int main() {
 
     bool isLeftMousePressed = false;
     bool isRightMousePressed = false;
-    bool isSsPressed = false;
-    bool setStart = false;
-    bool setEnd = false;
+    bool isShiftPressed = false;
     bool searching = false;
 
     Vector2i startCell = {-1, -1}; // coords for start cell
@@ -122,7 +120,7 @@ int main() {
             }
 
             // toggle diagonal only
-            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::D) {
+            else if (event.type == Event::KeyReleased && event.key.code == Keyboard::D) {
                 allowDiagonal = !allowDiagonal;
             }
 
@@ -161,14 +159,14 @@ int main() {
                 cout << "Run Search" << endl;
             }
 
+            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::LShift) {
+                isShiftPressed = true;
+            }
+            else if (event.type == Event::KeyReleased && event.key.code == Keyboard::LShift) {
+                isShiftPressed = false;
+            }
             // set start cell
-            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::A) {
-                setStart = true;
-            }
-            else if (event.type == Event::KeyReleased && event.key.code == Keyboard::A) {
-                setStart = false;
-            }
-            else if (setStart && event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+            else if (isShiftPressed && event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 Vector2i mousePosition = Mouse::getPosition(window);
                 Vector2i cell = {mousePosition.x / cellSizes[cellSizeIdx], mousePosition.y / cellSizes[cellSizeIdx]};
                 if (cell.x < 0 || cell.x >= gridSize || cell.y < 0 || cell.y >= gridSize) continue;
@@ -185,15 +183,8 @@ int main() {
                 window.setTitle("Pathfinding Visualizer");
                 resetPathfinding(gridSize, cellStates);
             }
-
             // set end cell
-            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::S) {
-                setEnd = true;
-            }
-            else if (event.type == Event::KeyReleased && event.key.code == Keyboard::S) {
-                setEnd = false;
-            }
-            else if (setEnd && event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+            else if (isShiftPressed && event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Right) {
                 Vector2i mousePosition = Mouse::getPosition(window);
                 Vector2i cell = {mousePosition.x / cellSizes[cellSizeIdx], mousePosition.y / cellSizes[cellSizeIdx]};
                 if (cell.x < 0 || cell.x >= gridSize || cell.y < 0 || cell.y >= gridSize) continue;
@@ -265,9 +256,6 @@ int main() {
                 resetPathfinding(gridSize, cellStates);
             }
 
-            else if (event.type == Event::KeyPressed && event.key.code == Keyboard::P) {
-                isSsPressed = true;
-            }
             else if (event.type == Event::KeyReleased && event.key.code == Keyboard::P) {
                 Texture texture;
                 texture.create(window.getSize().x, window.getSize().y);

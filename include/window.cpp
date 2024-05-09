@@ -105,13 +105,13 @@ void addLegend(RenderWindow& window, vector<string>& legendParams) {
     window.draw(text);
 
     text.setFont(boldFont);
-    text.setString("Set Start:      S + Left Click");
+    text.setString("Set Start:      LShft + Left Click");
     text.setCharacterSize(14);
     text.setPosition(startX, startY+355);
     window.draw(text);
 
     text.setFont(boldFont);
-    text.setString("Set End:        E + Left Click");
+    text.setString("Set End:        LShft + Right Click");
     text.setCharacterSize(14);
     text.setPosition(startX, startY+380);
     window.draw(text);

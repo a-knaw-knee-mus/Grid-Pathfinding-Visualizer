@@ -23,7 +23,7 @@ struct Node {
 };
 
 // Calculate Manhattan distance between two points
-int manhattanDistance(int x1, int y1, int x2, int y2) {
+int manhattanDistance(const int x1, const int y1, const int x2, const int y2) {
     return abs(x1 - x2) + abs(y1 - y2);
 }
 
@@ -68,9 +68,11 @@ vector<Vector2i> findPath(vector<vector<cellState>>& cellStates, const Vector2i 
 
         if (!isStartOrEnd(current->x, current->y, startCellIdx, endCellIdx)) {
             cellStates[current->x][current->y] = Visited;
-            refreshScreen(window, cell, cellStates, cellStates.size(), cellSize, legendParams);
-            chrono::milliseconds duration(speed);
-            this_thread::sleep_for(duration);
+            if (speed != 0) {
+                refreshScreen(window, cell, cellStates, cellStates.size(), cellSize, legendParams);
+                chrono::milliseconds duration(speed);
+                this_thread::sleep_for(duration);
+            }
         }
 
         if (current->x == endCellIdx.x && current->y == endCellIdx.y) {

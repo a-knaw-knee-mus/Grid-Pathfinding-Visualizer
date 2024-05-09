@@ -22,12 +22,12 @@ void resetPathfinding(const int gridSize, vector<vector<cellState>>& cellStates)
 
 int main() {
     string searchType = "AStar";
-    int speed = 0; // ms delay between frames
-    const int minSpeed = 0, maxSpeed = 200;
-    int cellSize = 10;
-    const int minCellSize = 4, maxCellSize = 30;
+    int speedIdx = 0;
+    const vector<int> speeds = {0, 1, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 120, 140, 160, 180, 200}; // ms delay between frames
+    int cellSizeIdx = 3;
+    const vector<int> cellSizes = {4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30}; // px size per cell
     const int windowSize = 500;
-    int gridSize = windowSize / cellSize;
+    int gridSize = windowSize / cellSizes[cellSizeIdx];
     bool allowDiagonal = false;
 
     // extra 350px horizontal for instructions
@@ -40,7 +40,7 @@ int main() {
     vector<vector<cellState>> cellStates(gridSize, vector<cellState>(gridSize, Clear));
 
     RectangleShape cell{};
-    cell.setSize(Vector2f(cellSize-1, cellSize-1));
+    cell.setSize(Vector2f(cellSizes[cellSizeIdx]-1, cellSizes[cellSizeIdx]-1));
     cell.setPosition(1, 1);
     cell.setOutlineColor(Color::Black);
     cell.setOutlineThickness(1);
@@ -63,9 +63,9 @@ int main() {
 
             // change cell size
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Up) {
-                if (cellSize + 2 > maxCellSize) continue;
-                cellSize += 2;
-                gridSize = windowSize / cellSize;
+                if (cellSizeIdx+1 >= cellSizes.size()) continue;
+                cellSizeIdx += 1;
+                gridSize = windowSize / cellSizes[cellSizeIdx];
 
                 cellStates.resize(gridSize);
                 for (vector<cellState>& row: cellStates) {
@@ -74,8 +74,8 @@ int main() {
 
                 for (int i=0; i<gridSize; i++) {
                     for (int j=0; j<gridSize; j++) {
-                        cell.setSize(Vector2f(cellSize-1, cellSize-1));
-                        cell.setPosition(i * cellSize, j * cellSize);
+                        cell.setSize(Vector2f(cellSizes[cellSizeIdx]-1, cellSizes[cellSizeIdx]-1));
+                        cell.setPosition(i * cellSizes[cellSizeIdx], j * cellSizes[cellSizeIdx]);
                         cellStates[i][j] = Clear;
                     }
                 }
@@ -84,9 +84,9 @@ int main() {
                 endCell = {-1, -1};
             }
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Down) {
-                if (cellSize - 2 < minCellSize) continue;
-                cellSize -= 2;
-                gridSize = windowSize / cellSize;
+                if (cellSizeIdx-1 < 0) continue;
+                cellSizeIdx -= 1;
+                gridSize = windowSize / cellSizes[cellSizeIdx];
 
                 cellStates.resize(gridSize);
                 for (vector<cellState>& row: cellStates) {
@@ -95,7 +95,7 @@ int main() {
 
                 for (int i=0; i<gridSize; i++) {
                     for (int j=0; j<gridSize; j++) {
-                        cell.setSize(Vector2f(cellSize-1, cellSize-1));
+                        cell.setSize(Vector2f(cellSizes[cellSizeIdx]-1, cellSizes[cellSizeIdx]-1));
                         cellStates[i][j] = Clear;
                     }
                 }
@@ -106,12 +106,12 @@ int main() {
 
             // change animation speed
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Right) {
-                if (speed + 10 > maxSpeed) continue;
-                speed += 10;
+                if (speedIdx+1 >= speeds.size()) continue;
+                speedIdx += 1;
             }
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Left) {
-                if (speed - 10 < minSpeed) continue;
-                speed -= 10;
+                if (speedIdx-1 < 0) continue;
+                speedIdx -= 1;
             }
 
             // toggle diagonal only
@@ -160,7 +160,7 @@ int main() {
             }
             else if (setStart && event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 Vector2i mousePosition = Mouse::getPosition(window);
-                Vector2i cell = {mousePosition.x / cellSize, mousePosition.y / cellSize};
+                Vector2i cell = {mousePosition.x / cellSizes[cellSizeIdx], mousePosition.y / cellSizes[cellSizeIdx]};
                 if (cell.x < 0 || cell.x >= gridSize || cell.y < 0 || cell.y >= gridSize) continue;
                 cellStates[cell.x][cell.y] = Start;
                 if (startCell.x != -1 && startCell.y != -1) { // remove last selected start cell
@@ -184,7 +184,7 @@ int main() {
             }
             else if (setEnd && event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
                 Vector2i mousePosition = Mouse::getPosition(window);
-                Vector2i cell = {mousePosition.x / cellSize, mousePosition.y / cellSize};
+                Vector2i cell = {mousePosition.x / cellSizes[cellSizeIdx], mousePosition.y / cellSizes[cellSizeIdx]};
                 if (cell.x < 0 || cell.x >= gridSize || cell.y < 0 || cell.y >= gridSize) continue;
                 cellStates[cell.x][cell.y] = End;
                 if (endCell.x != -1 && endCell.y != -1) { // remove last selected end cell
@@ -218,7 +218,7 @@ int main() {
             }
             else if (isLeftMousePressed && Mouse::isButtonPressed(Mouse::Left)) {
                 Vector2i mousePosition = Mouse::getPosition(window);
-                Vector2i cell = {mousePosition.x / cellSize, mousePosition.y / cellSize};
+                Vector2i cell = {mousePosition.x / cellSizes[cellSizeIdx], mousePosition.y / cellSizes[cellSizeIdx]};
                 if (cell.x < 0 || cell.x >= gridSize || cell.y < 0 || cell.y >= gridSize) continue;
                 if (cell.x >= 0 && cell.x < gridSize && cell.y >= 0 && cell.y < gridSize) {
                     cellStates[cell.x][cell.y] = Wall;
@@ -227,8 +227,7 @@ int main() {
                 if (cell.x == startCell.x && cell.y == startCell.y) {
                     startCell = {-1, -1};
                 }
-                if (cell.x == endCell.x &&
-                    cell.y == endCell.y) {
+                if (cell.x == endCell.x && cell.y == endCell.y) {
                     endCell = {-1, -1};
                 }
 
@@ -236,7 +235,7 @@ int main() {
             }
             else if (isRightMousePressed && Mouse::isButtonPressed(Mouse::Right)) {
                 Vector2i mousePosition = Mouse::getPosition(window);
-                Vector2i cell = {mousePosition.x / cellSize, mousePosition.y / cellSize};
+                Vector2i cell = {mousePosition.x / cellSizes[cellSizeIdx], mousePosition.y / cellSizes[cellSizeIdx]};
                 if (cell.x < 0 || cell.x >= gridSize || cell.y < 0 || cell.y >= gridSize) continue;
                 if (cell.x >= 0 && cell.x < gridSize && cell.y >= 0 && cell.y < gridSize) {
                     cellStates[cell.x][cell.y] = Clear;
@@ -253,20 +252,20 @@ int main() {
             }
         }
 
-        vector<string> legendParams = {searchType, to_string(speed), to_string(cellSize), allowDiagonal ? "Yes" : "No"};
+        vector<string> legendParams = {searchType, to_string(speeds[speedIdx]), to_string(cellSizes[cellSizeIdx]), allowDiagonal ? "Yes" : "No"};
 
         if (searching) {
-            vector<Vector2i> path = findPath(cellStates, startCell, endCell, allowDiagonal, cell, window, event, cellSize, speed, legendParams);
+            vector<Vector2i> path = findPath(cellStates, startCell, endCell, allowDiagonal, cell, window, event, cellSizes[cellSizeIdx], speeds[speedIdx], legendParams);
             for (const auto& node : path) {
                 cellStates[node.x][node.y] = Path;
-                chrono::milliseconds duration(speed);
+                chrono::milliseconds duration(speeds[speedIdx]);
                 this_thread::sleep_for(duration);
-                refreshScreen(window, cell, cellStates, gridSize, cellSize, legendParams);
+                refreshScreen(window, cell, cellStates, gridSize, cellSizes[cellSizeIdx], legendParams);
             }
             searching = false;
         }
 
-        refreshScreen(window, cell, cellStates, gridSize, cellSize, legendParams);
+        refreshScreen(window, cell, cellStates, gridSize, cellSizes[cellSizeIdx], legendParams);
     }
     return 0;
 }

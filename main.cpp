@@ -62,6 +62,14 @@ int main() {
                 window.close();
             }
 
+            // set pathfinding algorithm
+            else if (event.type == Event::KeyReleased && event.key.code == Keyboard::Num1) {
+                searchType = "AStar";
+            }
+            else if (event.type == Event::KeyReleased && event.key.code == Keyboard::Num2) {
+                searchType = "BFS";
+            }
+
             // change cell size
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Up) {
                 if (cellSizeIdx+1 >= cellSizes.size()) continue;
@@ -281,7 +289,14 @@ int main() {
         vector<string> legendParams = {searchType, to_string(speeds[speedIdx]), to_string(cellSizes[cellSizeIdx]), allowDiagonal ? "Yes" : "No"};
 
         if (searching) {
-            vector<Vector2i> path = findPathAStar(cellStates, startCell, endCell, allowDiagonal, cell, window, event, cellSizes[cellSizeIdx], speeds[speedIdx], legendParams);
+            vector<Vector2i> path{};
+            if (searchType == "AStar") {
+                path = findPathAStar(cellStates, startCell, endCell, allowDiagonal, cell, window, event, cellSizes[cellSizeIdx], speeds[speedIdx], legendParams);
+            } else if (searchType == "BFS") {
+                path = findPathBFS(cellStates, startCell, endCell, allowDiagonal, cell, window, event, cellSizes[cellSizeIdx], speeds[speedIdx], legendParams);
+            } else {
+                cerr << "invalid search" << endl;
+            }
             for (const auto& node : path) {
                 cellStates[node.x][node.y] = Path;
                 chrono::milliseconds duration(speeds[speedIdx]);

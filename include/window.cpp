@@ -11,10 +11,10 @@ void addLegend(RenderWindow& window, unordered_map<string, string>& legendParams
     int startX = 520;
     int startY = 15; // vertical offset
 
-    if (!regularFont.loadFromFile("../fonts/JetBrainsMono-Regular.ttf")) {
+    if (!regularFont.loadFromFile("fonts/JetBrainsMono-Regular.ttf")) {
         cerr << "Failed to load JetBrainsMono-Regular.ttf" << endl;
     }
-    if (!boldFont.loadFromFile("../fonts/JetBrainsMono-Bold.ttf")) {
+    if (!boldFont.loadFromFile("fonts/JetBrainsMono-Bold.ttf")) {
         cerr << "Failed to load JetBrainsMono-Bold.ttf" << endl;
     }
 

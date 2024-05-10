@@ -36,7 +36,7 @@ int main() {
     RenderWindow window(VideoMode(windowSize + 325, windowSize+1), "Pathfinding Visualizer", Style::Titlebar | Style::Close);
 
     Image icon;
-    icon.loadFromFile("../images/bullsEye.jpg");
+    icon.loadFromFile("images/bullsEye.jpg");
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
     vector<vector<cellState>> cellStates(gridSize, vector<cellState>(gridSize, Clear));

@@ -69,6 +69,9 @@ int main() {
             else if (event.type == Event::KeyReleased && event.key.code == Keyboard::Num2) {
                 searchType = "BFS";
             }
+            else if (event.type == Event::KeyReleased && event.key.code == Keyboard::Num3) {
+                searchType = "Greedy BFS";
+            }
 
             // change cell size
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::Up) {
@@ -141,6 +144,7 @@ int main() {
                 }
                 startCell = {-1, -1};
                 endCell = {-1, -1};
+                window.setTitle("Pathfinding Visualizer");
             }
 
             else if (event.type == Event::KeyPressed && event.key.code == Keyboard::W) {
@@ -294,6 +298,8 @@ int main() {
                 path = findPathAStar(cellStates, startCell, endCell, allowDiagonal, cell, window, event, cellSizes[cellSizeIdx], speeds[speedIdx], legendParams);
             } else if (searchType == "BFS") {
                 path = findPathBFS(cellStates, startCell, endCell, allowDiagonal, cell, window, event, cellSizes[cellSizeIdx], speeds[speedIdx], legendParams);
+            } else if (searchType == "Greedy BFS") {
+                path = findPathGreedyBFS(cellStates, startCell, endCell, allowDiagonal, cell, window, event, cellSizes[cellSizeIdx], speeds[speedIdx], legendParams);
             } else {
                 cerr << "invalid search" << endl;
             }

@@ -33,7 +33,7 @@ void addLegend(RenderWindow& window, vector<string>& legendParams) {
     window.draw(text);
 
     text.setFont(regularFont);
-    text.setString("A*: 1");
+    text.setString("A*: 1  BFS: 2  Greedy BFS: 3");
     text.setCharacterSize(14);
     text.setPosition(startX, startY+52);
     window.draw(text);

@@ -74,64 +74,78 @@ void addLegend(RenderWindow& window, unordered_map<string, string>& legendParams
     text.setPosition(startX, startY+187);
     window.draw(text);
 
-    text.setFont(boldFont);
-    text.setString("Generate Walls: Q");
+    int offset = 135;
     text.setCharacterSize(14);
+    text.setFont(boldFont);
+
+    text.setString("Generate Walls:");
     text.setPosition(startX, startY+230);
     window.draw(text);
+    text.setString("Q");
+    text.setPosition(startX+offset, startY+230);
+    window.draw(text);
 
-    text.setFont(boldFont);
-    text.setString("Generate Maze:  W");
-    text.setCharacterSize(14);
+    text.setString("Generate Maze:");
     text.setPosition(startX, startY+255);
     window.draw(text);
+    text.setString("W");
+    text.setPosition(startX+offset, startY+255);
+    window.draw(text);
 
-    text.setFont(boldFont);
-    text.setString("Restart:        R");
-    text.setCharacterSize(14);
+    text.setString("Restart:");
     text.setPosition(startX, startY+280);
     window.draw(text);
+    text.setString("R");
+    text.setPosition(startX+offset, startY+280);
+    window.draw(text);
 
-    text.setFont(boldFont);
-    text.setString("Set Wall:       Hold Left Click");
-    text.setCharacterSize(14);
+    text.setString("Set Wall:");
     text.setPosition(startX, startY+305);
     window.draw(text);
+    text.setString("Hold Left Click");
+    text.setPosition(startX+offset, startY+305);
+    window.draw(text);
 
-    text.setFont(boldFont);
-    text.setString("Remove Wall:    Hold Right Click");
-    text.setCharacterSize(14);
+    text.setString("Remove Wall:");
     text.setPosition(startX, startY+330);
     window.draw(text);
+    text.setString("Hold Right Click");
+    text.setPosition(startX+offset, startY+330);
+    window.draw(text);
 
-    text.setFont(boldFont);
-    text.setString("Set Start:      LShft + Left Click");
-    text.setCharacterSize(14);
+    text.setString("Set Start:");
     text.setPosition(startX, startY+355);
     window.draw(text);
+    text.setString("LShft + Left Click");
+    text.setPosition(startX+offset, startY+355);
+    window.draw(text);
 
-    text.setFont(boldFont);
-    text.setString("Set End:        LShft + Right Click");
-    text.setCharacterSize(14);
+    text.setString("Set End:");
     text.setPosition(startX, startY+380);
     window.draw(text);
+    text.setString("LShft + Right Click");
+    text.setPosition(startX+offset, startY+380);
+    window.draw(text);
 
-    text.setFont(boldFont);
-    text.setString("Begin Search:   Enter");
-    text.setCharacterSize(14);
+    text.setString("Begin Search:");
     text.setPosition(startX, startY+405);
     window.draw(text);
-
-    text.setFont(boldFont);
-    text.setString("Pause Search:   Esc");
-    text.setCharacterSize(14);
-    text.setPosition(startX, startY+430);
+    text.setString("Enter");
+    text.setPosition(startX+offset, startY+405);
     window.draw(text);
 
-    text.setFont(boldFont);
-    text.setString("Screenshot:     P");
-    text.setCharacterSize(14);
+    text.setString("Pause Search:");
+    text.setPosition(startX, startY+430);
+    window.draw(text);
+    text.setString("Esc");
+    text.setPosition(startX+offset, startY+430);
+    window.draw(text);
+
+    text.setString("Screenshot:");
     text.setPosition(startX, startY+455);
+    window.draw(text);
+    text.setString("P");
+    text.setPosition(startX+offset, startY+455);
     window.draw(text);
 }
 

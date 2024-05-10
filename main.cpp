@@ -290,7 +290,7 @@ int main() {
             }
         }
 
-        vector<string> legendParams = {searchType, to_string(speeds[speedIdx]), to_string(cellSizes[cellSizeIdx]), allowDiagonal ? "Yes" : "No"};
+        unordered_map<string, string> legendParams = {{"searchType", searchType}, {"speed", to_string(speeds[speedIdx])}, {"cellSize", to_string(cellSizes[cellSizeIdx])}, {"allowDiagonal", allowDiagonal ? "Yes" : "No"}};
 
         if (searching) {
             vector<Vector2i> path{};

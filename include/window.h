@@ -5,7 +5,7 @@
 using namespace sf;
 using namespace std;
 
-void refreshScreen(RenderWindow& window, RectangleShape& cell, const vector<vector<cellState>>& cellStates, int gridSize, int cellSize, vector<string>& legendParams);
+void refreshScreen(RenderWindow& window, RectangleShape& cell, const vector<vector<cellState>>& cellStates, int gridSize, int cellSize, unordered_map<string, string>& legendParams);
 
 void placeRandomWalls(vector<vector<cellState>>& cellStates, int gridSize, int numWalls);
 

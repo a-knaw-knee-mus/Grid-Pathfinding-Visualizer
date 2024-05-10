@@ -26,7 +26,7 @@ bool isStartOrEnd(const int x, const int y, const Vector2i start, const Vector2i
 }
 
 // Greedy BFS algorithm implementation
-vector<Vector2i> findPathGreedyBFS(vector<vector<cellState>>& cellStates, const Vector2i startCellIdx, const Vector2i endCellIdx, const bool allowDiagonal, RectangleShape& cell, RenderWindow& window, Event& event, const int cellSize, const int speed, vector<string>& legendParams) {
+vector<Vector2i> findPathGreedyBFS(vector<vector<cellState>>& cellStates, const Vector2i startCellIdx, const Vector2i endCellIdx, const bool allowDiagonal, RectangleShape& cell, RenderWindow& window, Event& event, const int cellSize, const int speed, unordered_map<string, string>& legendParams) {
     struct Node {
         int x, y;  // Node position
         int cost;
@@ -148,7 +148,7 @@ vector<Vector2i> findPathGreedyBFS(vector<vector<cellState>>& cellStates, const 
 }
 
 // BFS algorithm implementation
-vector<Vector2i> findPathBFS(vector<vector<cellState>>& cellStates, const Vector2i startCellIdx, const Vector2i endCellIdx, const bool allowDiagonal, RectangleShape& cell, RenderWindow& window, Event& event, int cellSize, int speed, vector<string>& legendParams) {
+vector<Vector2i> findPathBFS(vector<vector<cellState>>& cellStates, const Vector2i startCellIdx, const Vector2i endCellIdx, const bool allowDiagonal, RectangleShape& cell, RenderWindow& window, Event& event, int cellSize, int speed, unordered_map<string, string>& legendParams) {
     struct Node {
         int x, y; // Node position
         int cost;
@@ -257,7 +257,7 @@ vector<Vector2i> findPathBFS(vector<vector<cellState>>& cellStates, const Vector
 }
 
 // A* algorithm implementation
-vector<Vector2i> findPathAStar(vector<vector<cellState>>& cellStates, const Vector2i startCellIdx, const Vector2i endCellIdx, const bool allowDiagonal, RectangleShape& cell, RenderWindow& window, Event& event, const int cellSize, const int speed, vector<string>& legendParams) {
+vector<Vector2i> findPathAStar(vector<vector<cellState>>& cellStates, const Vector2i startCellIdx, const Vector2i endCellIdx, const bool allowDiagonal, RectangleShape& cell, RenderWindow& window, Event& event, const int cellSize, const int speed, unordered_map<string, string>& legendParams) {
     struct Node {
         int x, y;  // Node position
         int costFromStart;  // Cost from start to this node

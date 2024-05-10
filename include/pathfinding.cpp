@@ -125,7 +125,7 @@ vector<Vector2i> findPathGreedyBFS(vector<vector<cellState>>& cellStates, const 
 
             Node* nextNode = new Node(nextX, nextY, newCostFromStart, newCostToEnd, current);
             if (!isStartOrEnd(nextX, nextY, startCellIdx, endCellIdx)) {
-                cellStates[nextX][nextY] = VisitedInQueue;
+                cellStates[nextX][nextY] = InQueue;
             }
             pq.push(nextNode);
         }
@@ -243,7 +243,7 @@ vector<Vector2i> findPathBFS(vector<vector<cellState>>& cellStates, const Vector
 
             Node* nextNode = new Node(nextX, nextY, newCostFromStart, current);
             if (!isStartOrEnd(nextX, nextY, startCellIdx, endCellIdx)) {
-                cellStates[nextX][nextY] = VisitedInQueue;
+                cellStates[nextX][nextY] = InQueue;
             }
             q.push(nextNode);
         }
@@ -356,7 +356,7 @@ vector<Vector2i> findPathAStar(vector<vector<cellState>>& cellStates, const Vect
 
             Node* nextNode = new Node(nextX, nextY, newCostFromStart, newCostToEnd, current);
             if (!isStartOrEnd(nextX, nextY, startCellIdx, endCellIdx)) {
-                cellStates[nextX][nextY] = VisitedInQueue;
+                cellStates[nextX][nextY] = InQueue;
             }
             pq.push(nextNode);
         }

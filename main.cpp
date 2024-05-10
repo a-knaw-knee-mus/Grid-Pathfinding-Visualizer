@@ -11,11 +11,11 @@
 using namespace std;
 using namespace sf;
 
-// Remove Visited, VisitedInQueue and Path Cells
+// Remove Visited, InQueue and Path Cells
 void resetPathfinding(const int gridSize, vector<vector<cellState>>& cellStates) {
     for (int x = 0; x < gridSize; ++x) {
         for (int y = 0; y < gridSize; ++y) {
-            if (cellStates[x][y] == Visited || cellStates[x][y] == Path || cellStates[x][y] == VisitedInQueue) {
+            if (cellStates[x][y] == Visited || cellStates[x][y] == Path || cellStates[x][y] == InQueue || cellStates[x][y] == VisitedNoPath) {
                 cellStates[x][y] = Clear;
             }
         }
@@ -268,6 +268,7 @@ int main() {
                 resetPathfinding(gridSize, cellStates);
             }
 
+            // save screenshot
             else if (event.type == Event::KeyReleased && event.key.code == Keyboard::P) {
                 Texture texture;
                 texture.create(window.getSize().x, window.getSize().y);
@@ -290,6 +291,7 @@ int main() {
             }
         }
 
+        // text to update on screen
         unordered_map<string, string> legendParams = {{"searchType", searchType}, {"speed", to_string(speeds[speedIdx])}, {"cellSize", to_string(cellSizes[cellSizeIdx])}, {"allowDiagonal", allowDiagonal ? "Yes" : "No"}};
 
         if (searching) {
@@ -303,11 +305,21 @@ int main() {
             } else {
                 cerr << "invalid search" << endl;
             }
-            for (const auto& node : path) {
-                cellStates[node.x][node.y] = Path;
-                chrono::milliseconds duration(speeds[speedIdx]);
-                this_thread::sleep_for(duration);
-                refreshScreen(window, cell, cellStates, gridSize, cellSizes[cellSizeIdx], legendParams);
+            if (path.empty()) {
+                for (int x = 0; x < gridSize; ++x) {
+                    for (int y = 0; y < gridSize; ++y) {
+                        if (cellStates[x][y] == Visited) {
+                            cellStates[x][y] = VisitedNoPath;
+                        }
+                    }
+                }
+            } else {
+                for (const auto& node : path) {
+                    cellStates[node.x][node.y] = Path;
+                    chrono::milliseconds duration(speeds[speedIdx]);
+                    this_thread::sleep_for(duration);
+                    refreshScreen(window, cell, cellStates, gridSize, cellSizes[cellSizeIdx], legendParams);
+                }
             }
             searching = false;
         }
